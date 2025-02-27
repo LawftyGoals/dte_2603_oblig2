@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "dte_2603_oblig2"
+rootProject.name = "dte2603_oblig2"
 include(":app")
+ 

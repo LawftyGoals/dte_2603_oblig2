@@ -1,4 +1,4 @@
-package com.example.dte_2603_oblig2.ui.theme
+package com.example.dte2603_oblig2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
