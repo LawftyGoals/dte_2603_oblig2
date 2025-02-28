@@ -45,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dte2603_oblig2.R
 import com.example.dte2603_oblig2.data.CheckList
 import com.example.dte2603_oblig2.data.CheckListItem
+import com.example.dte2603_oblig2.data.DTOCheckList
 import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
 
 
@@ -53,6 +54,8 @@ import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
 fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
 
     val checkListUiState by checkListViewModel.uiState.collectAsState()
+    val checkLists = checkListUiState.checkLists
+    val checkListCount = checkListUiState.checkListCount
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -73,7 +76,7 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
         },
         bottomBar = {
             // A simple footer showing total list count
-            Footer(totalLists = checkListUiState.checkListCount)
+            Footer(totalLists = checkListCount)
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
@@ -82,7 +85,7 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
             Button(
                 onClick = {
                     checkListViewModel.addCheckList(
-                        CheckList(
+                        DTOCheckList(
                             "Navn", R.drawable
                                 .ic_launcher_background, mutableListOf()
                         )
@@ -158,7 +161,7 @@ fun ChecklistCard(checkList: CheckList, onDelete: () -> Unit) {
             // Show tasks only when expanded
             if (expanded) {
                 if (checkList.checkListItems.isEmpty()) {
-                    TaskItem(CheckListItem("Tomt", false))
+                    TaskItem(CheckListItem(-1,"Tomt", false))
                 } else {
                     checkList.checkListItems.forEach { task ->
                         TaskItem(task)

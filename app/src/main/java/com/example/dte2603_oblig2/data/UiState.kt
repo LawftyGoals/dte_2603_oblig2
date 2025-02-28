@@ -6,49 +6,58 @@ data class UiState(
     val isMultiColumn: Boolean = false,
     val checkLists: MutableList<CheckList> = mutableListOf(
         CheckList(
+            checkListId = 0,
             "Red", R.drawable.pokemon_trainer_blue,
             mutableListOf(
-                CheckListItem("Bulbasaur", false),
-                CheckListItem("Charmander", true),
-                CheckListItem("Squirtle", false)
+                CheckListItem(0, "Bulbasaur", false),
+                CheckListItem(1, "Charmander", true),
+                CheckListItem(2, "Squirtle", false)
             )
         ),
         CheckList(
+            checkListId = 1,
             "Blue",
             R.drawable.pokemon_trainer_blue,
             mutableListOf(
-                CheckListItem("Bulbasaur", false),
-                CheckListItem("Charmander", false),
-                CheckListItem("Squirtle", true)
+                CheckListItem(3, "Bulbasaur", false),
+                CheckListItem(4, "Charmander", false),
+                CheckListItem(5, "Squirtle", true)
             )
         ),
         CheckList(
+            checkListId = 2,
             "Min todo-liste",
             R.drawable.ic_launcher_background,
             mutableListOf(
-                CheckListItem("Skriv søknad", false), CheckListItem(
-                    "Send søknad",
+                CheckListItem(6, "Skriv søknad", false), CheckListItem(
+                    7, "Send søknad",
                     false
-                ), CheckListItem("Få jobb", false), CheckListItem("Jobb hardt", true)
+                ), CheckListItem(8, "Få jobb", false), CheckListItem(9, "Jobb hardt", true)
             )
         ),
         CheckList(
+            checkListId = 3,
             "Husvask",
             R.drawable.ic_launcher_background, mutableListOf(
-                CheckListItem("Kjøkkenet", true),
-                CheckListItem("Badet", false), CheckListItem("Stua", false), CheckListItem
-                    ("Soverom", true)
+                CheckListItem(10, "Kjøkkenet", true),
+                CheckListItem(11, "Badet", false), CheckListItem(12, "Stua", false), CheckListItem
+                    (13, "Soverom", true)
             )
         ),
         CheckList(
+            checkListId = 4,
             "Studieplan",
             R.drawable.ic_launcher_background,
             mutableListOf(
-                CheckListItem("Gjør matteoppgaver", false), CheckListItem(
-                    "Gjør fysikkoppgaver", true
-                ), CheckListItem("Gjør kjemioppgaver", false)
+                CheckListItem(14, "Gjør matteoppgaver", false), CheckListItem(
+                    15, "Gjør fysikkoppgaver", true
+                ), CheckListItem(16, "Gjør kjemioppgaver", false)
             )
         )
     ),
-    val checkListCount: Int = checkLists.count()
+    val checkListCount: Int = checkLists.count(),
+    val checkListIdValue: Int = checkLists.count(),
+
+    val checkListItemCount: Int = 16,
+    val checkListItemIdValue: Int = 17
 )
