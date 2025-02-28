@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
+import com.example.dte2603_oblig2.ui.checklist.CheckListScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Dte2603_oblig2Theme {
-                MainScreen()
+                CheckListScreen()
             }
         }
     }

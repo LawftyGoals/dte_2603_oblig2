@@ -1,10 +1,11 @@
-package com.example.dte2603_oblig2.ui.theme.checklist
+package com.example.dte2603_oblig2.ui.checklist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dte2603_oblig2.R
 import com.example.dte2603_oblig2.data.CheckList
 import com.example.dte2603_oblig2.data.CheckListItem
 import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
@@ -52,10 +54,6 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
 
     val checkListUiState by checkListViewModel.uiState.collectAsState()
 
-    val checklists = remember {
-        checkListViewModel.checkListState
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -64,28 +62,31 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                 title = { Text("MineHuskelister") },
                 actions = {
                     // Toggle between 2 columns and 1 column
-                    IconButton(onClick = { checkListViewModel.toggleCheckListColumns() }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Toggle Columns"
-                        )
-                    }
+                    Text("Vis som 2 kolonner")
+                    Spacer(Modifier.padding(4.dp))
+                    Switch(checked = checkListUiState.isMultiColumn, onCheckedChange = {
+                        checkListViewModel
+                            .toggleCheckListColumns()
+                    })
                 }
             )
         },
         bottomBar = {
             // A simple footer showing total list count
-            Footer(totalLists = checklists.size)
+            Footer(totalLists = checkListUiState.checkListCount)
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
 
-            // Button for creating a new checklist
+            // Button for creating a new checkList
             Button(
                 onClick = {
-                    // Example logic: add an empty checklist
-                    /*checklists = checklists + Checklist("Ny liste", listOf("Ny oppgave 1"))
-                */
+                    checkListViewModel.addCheckList(
+                        CheckList(
+                            "Navn", R.drawable
+                                .ic_launcher_background, mutableListOf()
+                        )
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -95,17 +96,17 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                 Text("Legg til ny sjekkliste")
             }
 
-            // Lazy grid for checklists
+            // Lazy grid for checkLists
             LazyVerticalGrid(
                 columns = GridCells.Fixed(if (checkListUiState.isMultiColumn) 2 else 1),
                 modifier = Modifier.weight(1f), // fill remaining space
                 contentPadding = PaddingValues(8.dp)
             ) {
-                items(checklists) { checklist ->
+                items(checkListUiState.checkLists) { checkList ->
                     ChecklistCard(
-                        checklist = checklist,
+                        checkList = checkList,
                         onDelete = {
-                            /*checklists = checklists.toMutableList().filter { it != checklist } */
+                            checkListViewModel.deleteCheckList(checkList)
                         }
                     )
                 }
@@ -114,10 +115,8 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
     }
 }
 
-data class Checklist(val title: String, val tasks: List<String>)
-
 @Composable
-fun ChecklistCard(checklist: CheckList?, onDelete: () -> Unit) {
+fun ChecklistCard(checkList: CheckList, onDelete: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -133,13 +132,13 @@ fun ChecklistCard(checklist: CheckList?, onDelete: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (checklist != null) {
-                    Text(
-                        text = checklist.name,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+
+                Text(
+                    text = checkList.name,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+
 
                 // Expand/Collapse icon
                 IconButton(onClick = { expanded = !expanded }) {
@@ -150,7 +149,7 @@ fun ChecklistCard(checklist: CheckList?, onDelete: () -> Unit) {
                     )
                 }
 
-                // Delete checklist icon
+                // Delete checkList icon
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete")
                 }
@@ -158,11 +157,14 @@ fun ChecklistCard(checklist: CheckList?, onDelete: () -> Unit) {
 
             // Show tasks only when expanded
             if (expanded) {
-                if (checklist != null) {
-                    checklist.checkListItems.forEach { task ->
+                if (checkList.checkListItems.isEmpty()) {
+                    TaskItem(CheckListItem("Tomt", false))
+                } else {
+                    checkList.checkListItems.forEach { task ->
                         TaskItem(task)
                     }
                 }
+
             }
         }
     }
