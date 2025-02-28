@@ -1,5 +1,6 @@
 package com.example.dte2603_oblig2.ui.checklist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.dte2603_oblig2.data.CheckList
 import com.example.dte2603_oblig2.data.CheckListItem
@@ -72,8 +73,9 @@ class CheckListViewModel : ViewModel() {
 
     fun updateCheckListItemState(
         checkList: CheckList, prevCheckListItem: CheckListItem,
-        updatedCheckListItem: CheckListItem
+        updatedCheckListItem: DTOCheckListItem
     ) {
+        Log.i("UPDATECHECKLISTITEM", "${updatedCheckListItem.checked}")
 
         _uiState.update { currentState ->
             val tempCheckLists = currentState.checkLists
@@ -116,11 +118,10 @@ class CheckListViewModel : ViewModel() {
     }
 
     fun deleteCheckListItem(checkList: CheckList, checkListItem: CheckListItem) {
-        _uiState.update {
-            currentState ->
+        _uiState.update { currentState ->
 
             val tempList = currentState.checkLists
-            val targetCheckList = tempList.firstOrNull { it == checkList}
+            val targetCheckList = tempList.firstOrNull { it == checkList }
 
             targetCheckList?.checkListItems?.remove(checkListItem)
 
@@ -128,6 +129,18 @@ class CheckListViewModel : ViewModel() {
                 checkLists = tempList,
                 checkListItemCount = currentState.checkListItemCount - 1
             )
+        }
+    }
+
+    fun checkAllCheckListItems(checkList: CheckList) {
+        _uiState.update { currentState ->
+            val tempList = currentState.checkLists
+            val targetList = tempList.firstOrNull { it.checkListId == checkList.checkListId }
+
+            targetList?.checkListItems?.forEach { it.checked = true}
+
+            currentState.copy()
+
         }
     }
 

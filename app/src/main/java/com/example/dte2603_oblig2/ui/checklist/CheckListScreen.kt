@@ -1,7 +1,9 @@
 package com.example.dte2603_oblig2.ui.checklist
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,7 +16,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -46,6 +50,7 @@ import com.example.dte2603_oblig2.R
 import com.example.dte2603_oblig2.data.CheckList
 import com.example.dte2603_oblig2.data.CheckListItem
 import com.example.dte2603_oblig2.data.DTOCheckList
+import com.example.dte2603_oblig2.data.DTOCheckListItem
 import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
 
 
@@ -105,9 +110,10 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                 modifier = Modifier.weight(1f), // fill remaining space
                 contentPadding = PaddingValues(8.dp)
             ) {
-                items(checkListUiState.checkLists) { checkList ->
+                items(checkLists) { checkList ->
                     ChecklistCard(
                         checkList = checkList,
+                        checkListViewModel = checkListViewModel,
                         onDelete = {
                             checkListViewModel.deleteCheckList(checkList)
                         }
@@ -119,7 +125,11 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
 }
 
 @Composable
-fun ChecklistCard(checkList: CheckList, onDelete: () -> Unit) {
+fun ChecklistCard(
+    checkList: CheckList,
+    checkListViewModel: CheckListViewModel,
+    onDelete: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -129,10 +139,12 @@ fun ChecklistCard(checkList: CheckList, onDelete: () -> Unit) {
         shape = RoundedCornerShape(10.dp),
         elevation = elevatedCardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column {
             // Title row + expand toggle + delete icon
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -141,7 +153,6 @@ fun ChecklistCard(checkList: CheckList, onDelete: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
-
 
                 // Expand/Collapse icon
                 IconButton(onClick = { expanded = !expanded }) {
@@ -152,44 +163,77 @@ fun ChecklistCard(checkList: CheckList, onDelete: () -> Unit) {
                     )
                 }
 
+            }
+
+            Column(
+                Modifier
+                    .border(2.dp, Color.Black)
+                    .fillMaxWidth()
+            ) {
+                // Show tasks only when expanded
+                if (expanded || true) {
+                    if (checkList.checkListItems.isEmpty()) {
+                        Text("Tomt")
+                    } else {
+                        checkList.checkListItems.forEach { task ->
+                            TaskItem(
+                                task, checkList, checkListViewModel
+                            )
+                        }
+                    }
+
+                } else {
+
+                    Spacer(Modifier.padding(1.dp))
+                }
+
+            }
+
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 // Delete checkList icon
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete")
                 }
-            }
 
-            // Show tasks only when expanded
-            if (expanded) {
-                if (checkList.checkListItems.isEmpty()) {
-                    TaskItem(CheckListItem(-1,"Tomt", false))
-                } else {
-                    checkList.checkListItems.forEach { task ->
-                        TaskItem(task)
-                    }
+                IconButton(onClick = {}) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit")
                 }
 
+                IconButton(onClick = {}) {
+                    Box {
+                        Icon(Icons.Default.Check, contentDescription = "Check")
+                        Row {
+                            Spacer(Modifier.padding(3.dp))
+                            Icon(Icons.Default.Check, contentDescription = "Check")
+                        }
+
+                    }
+                }
             }
+
         }
     }
 }
 
 @Composable
-fun TaskItem(task: CheckListItem) {
+fun TaskItem(task: CheckListItem, checkList: CheckList, checkListViewModel: CheckListViewModel) {
     // For demonstration, we'll track whether the item is "checked"
-    var checked by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
             .background(
-                color = if (checked) Color(0xFFE0F7FA) else Color.LightGray.copy(alpha = 0.2f),
+                color = Color.LightGray.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(8.dp)
             )
-            .clickable { checked = !checked }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Switch(checked = task.checked, onCheckedChange = { checkListViewModel
+            .updateCheckListItemState(checkList, task, DTOCheckListItem(task.name, !task.checked)
+            ) })
+        Spacer(Modifier.padding(8.dp))
         Text(text = task.name)
     }
 }
@@ -199,13 +243,15 @@ fun Footer(totalLists: Int) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.primary,
-        contentColor = Color.White
+        contentColor = Color.White,
     ) {
-        Text(
-            text = "Totalt $totalLists lister",
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
-        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Text(
+                text = "Totalt $totalLists lister",
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
