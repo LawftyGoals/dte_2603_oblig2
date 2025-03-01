@@ -121,7 +121,7 @@ fun MainScreen() {
             // Lazy grid for checklists
             LazyVerticalGrid(
                 columns = GridCells.Fixed(if (isTwoColumns) 2 else 1),
-                modifier = Modifier.weight(1f), // fill remaining space
+                modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(8.dp)
             ) {
                 items(checklists) { checklist ->

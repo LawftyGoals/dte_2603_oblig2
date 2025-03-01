@@ -86,10 +86,10 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
         topBar = {
             // A simple top app bar
             TopAppBar(
-                title = { Text("MineHuskelister") },
+                title = { Text(stringResource(R.string.minehuskelister)) },
                 actions = {
                     // Toggle between 2 columns and 1 column
-                    Text("Vis som 2 kolonner")
+                    Text(stringResource(R.string.vis_som_2_kolonner))
                     Spacer(Modifier.padding(4.dp))
                     Switch(checked = checkListUiState.isMultiColumn, onCheckedChange = {
                         checkListViewModel
@@ -123,14 +123,19 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                 Text(stringResource(R.string.add_new_checklist))
             }
 
-            Text("$checkListItemCheckedCount av $checkListItemCount oppgaver er utført",
+            Text(
+                stringResource(
+                    R.string.av_oppgaver_er_utf_rt,
+                    checkListItemCheckedCount,
+                    checkListItemCount
+                ),
                 fontSize =
             6.em, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
 
             // Lazy grid for checkLists
             LazyVerticalGrid(
                 columns = GridCells.Fixed(if (checkListUiState.isMultiColumn) 2 else 1),
-                modifier = Modifier.weight(1f), // fill remaining space
+                modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(8.dp)
             ) {
                 items(checkListUiState.checkLists) { checkList ->
@@ -173,7 +178,7 @@ fun ChecklistCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = drawable, contentDescription = "Image for " + checkList.name,
+                    painter = drawable, contentDescription = stringResource(R.string.image_for) + checkList.name,
                     contentScale = ContentScale.Fit, modifier = Modifier
                         .weight(1f)
                         .height(32.dp)
@@ -191,7 +196,9 @@ fun ChecklistCard(
                     Icon(
                         imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                         else Icons.Default.KeyboardArrowDown,
-                        contentDescription = if (expanded) "Collapse" else "Expand"
+                        contentDescription = if (expanded) stringResource(R.string.collapse) else stringResource(
+                            R.string.expand
+                        )
                     )
                 }
 
@@ -205,7 +212,7 @@ fun ChecklistCard(
                 // Show tasks only when expanded
                 if (expanded) {
                     if (checkList.checkListItems.isEmpty()) {
-                        Text("Tomt")
+                        Text(stringResource(R.string.tomt))
                     } else {
                         checkList.checkListItems.forEach { task ->
                             TaskItem(
@@ -224,19 +231,19 @@ fun ChecklistCard(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 // Delete checkList icon
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                 }
 
                 IconButton(onClick = {}) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+                    Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
                 }
 
                 IconButton(onClick = { checkListViewModel.checkAllCheckListItems(checkList) }) {
                     Box {
-                        Icon(Icons.Default.Check, contentDescription = "Check")
+                        Icon(Icons.Default.Check, contentDescription = stringResource(R.string.check))
                         Row {
                             Spacer(Modifier.padding(3.dp))
-                            Icon(Icons.Default.Check, contentDescription = "Check")
+                            Icon(Icons.Default.Check, contentDescription = stringResource(R.string.check2))
                         }
 
                     }
@@ -249,8 +256,6 @@ fun ChecklistCard(
 
 @Composable
 fun TaskItem(task: CheckListItem, checkList: CheckList, checkListViewModel: CheckListViewModel) {
-    // For demonstration, we'll track whether the item is "checked"
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -282,7 +287,7 @@ fun Footer(totalLists: Int) {
     ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text(
-                text = "Totalt $totalLists lister",
+                text = stringResource(R.string.totalt_lister, totalLists),
                 modifier = Modifier.padding(16.dp),
                 fontWeight = FontWeight.Bold
             )

@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">dte2603_oblig2</string>
     <string name="add_new_checklist">Legg til ny sjekkliste</string>
+    <string name="minehuskelister">MineHuskelister</string>
+    <string name="vis_som_2_kolonner">Vis som 2 kolonner</string>
+    <string name="av_oppgaver_er_utf_rt">%1$s av %2$s oppgaver er utført</string>
+    <string name="image_for">"Image for "</string>
+    <string name="collapse">Collapse</string>
+    <string name="expand">Expand</string>
+    <string name="tomt">Tomt</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="check">Check</string>
+    <string name="check2">Check</string>
+    <string name="totalt_lister">Totalt %1$s lister</string>
 </resources>
