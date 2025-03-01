@@ -7,7 +7,7 @@ data class UiState(
     val checkLists: MutableList<CheckList> = mutableListOf(
         CheckList(
             checkListId = 0,
-            "Red", R.drawable.pokemon_trainer_blue,
+            "Red", R.drawable.pokemon_trainer_red,
             mutableListOf(
                 CheckListItem(0, "Bulbasaur", false),
                 CheckListItem(1, "Charmander", true),

@@ -1,5 +1,6 @@
 package com.example.dte2603_oblig2.ui.checklist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -42,9 +45,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dte2603_oblig2.R
 import com.example.dte2603_oblig2.data.CheckList
@@ -59,8 +67,19 @@ import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
 fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
 
     val checkListUiState by checkListViewModel.uiState.collectAsState()
-    val checkLists = checkListUiState.checkLists
-    val checkListCount = checkListUiState.checkListCount
+
+    val checkListCount = checkListUiState.checkLists.count()
+
+    val checkListItemCount: Int = checkListUiState.checkLists.fold(0) { acc, next ->
+        acc + next
+            .checkListItems.count()
+    }
+
+    val checkListItemCheckedCount: Int = checkListUiState.checkLists.fold(0) {
+        acc, next ->
+        acc + next.checkListItems.fold(0) {subAcc, subNext -> if(subNext.checked) subAcc + 1 else
+            subAcc}
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -101,8 +120,12 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                     .padding(8.dp),
                 shape = RoundedCornerShape(10.dp)
             ) {
-                Text("Legg til ny sjekkliste")
+                Text(stringResource(R.string.add_new_checklist))
             }
+
+            Text("$checkListItemCheckedCount av $checkListItemCount oppgaver er utført",
+                fontSize =
+            6.em, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
 
             // Lazy grid for checkLists
             LazyVerticalGrid(
@@ -110,7 +133,7 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                 modifier = Modifier.weight(1f), // fill remaining space
                 contentPadding = PaddingValues(8.dp)
             ) {
-                items(checkLists) { checkList ->
+                items(checkListUiState.checkLists) { checkList ->
                     ChecklistCard(
                         checkList = checkList,
                         checkListViewModel = checkListViewModel,
@@ -132,6 +155,8 @@ fun ChecklistCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
+    val drawable = painterResource(checkList.icon)
+
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -147,15 +172,22 @@ fun ChecklistCard(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
+                Image(
+                    painter = drawable, contentDescription = "Image for " + checkList.name,
+                    contentScale = ContentScale.Fit, modifier = Modifier
+                        .weight(1f)
+                        .height(32.dp)
+                        .width(32.dp)
+                )
                 Text(
                     text = checkList.name,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
                 )
 
                 // Expand/Collapse icon
-                IconButton(onClick = { expanded = !expanded }) {
+                IconButton(modifier = Modifier.weight(1f), onClick = { expanded = !expanded }) {
                     Icon(
                         imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                         else Icons.Default.KeyboardArrowDown,
@@ -171,7 +203,7 @@ fun ChecklistCard(
                     .fillMaxWidth()
             ) {
                 // Show tasks only when expanded
-                if (expanded || true) {
+                if (expanded) {
                     if (checkList.checkListItems.isEmpty()) {
                         Text("Tomt")
                     } else {
@@ -199,7 +231,7 @@ fun ChecklistCard(
                     Icon(Icons.Default.Edit, contentDescription = "Edit")
                 }
 
-                IconButton(onClick = {}) {
+                IconButton(onClick = { checkListViewModel.checkAllCheckListItems(checkList) }) {
                     Box {
                         Icon(Icons.Default.Check, contentDescription = "Check")
                         Row {
@@ -230,9 +262,12 @@ fun TaskItem(task: CheckListItem, checkList: CheckList, checkListViewModel: Chec
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Switch(checked = task.checked, onCheckedChange = { checkListViewModel
-            .updateCheckListItemState(checkList, task, DTOCheckListItem(task.name, !task.checked)
-            ) })
+        Switch(checked = task.checked, onCheckedChange = {
+            checkListViewModel
+                .updateCheckListItemState(
+                    checkList, task, DTOCheckListItem(task.name, !task.checked)
+                )
+        })
         Spacer(Modifier.padding(8.dp))
         Text(text = task.name)
     }

@@ -23,20 +23,24 @@ class CheckListViewModel : ViewModel() {
 
     fun updateCheckList(prevCheckList: CheckList, updatedCheckList: CheckList) {
         _uiState.update { currentState ->
-            val tempCheckLists = currentState.checkLists
-            val targetCheckList = tempCheckLists.firstOrNull {
-                it.checkListId ==
-                        prevCheckList
-                            .checkListId
+            val updatedCheckLists = currentState.checkLists.map {
+                if (it.checkListId ==
+                    prevCheckList
+                        .checkListId
+                ) {
+                    CheckList(
+                        it.checkListId, updatedCheckList.name, updatedCheckList.icon,
+                        updatedCheckList
+                            .checkListItems
+                    )
+                } else {
+                    it
+                }
             }
-            if (targetCheckList != null) {
-                targetCheckList.name = updatedCheckList.name
-                targetCheckList.icon = targetCheckList.icon
-                targetCheckList.checkListItems = targetCheckList.checkListItems
-            }
+
             currentState.copy(
-                checkLists = tempCheckLists,
-                checkListCount = tempCheckLists.count()
+                checkLists = updatedCheckLists.toMutableList(),
+                checkListCount = updatedCheckLists.count()
             )
         }
     }
@@ -72,28 +76,35 @@ class CheckListViewModel : ViewModel() {
     }
 
     fun updateCheckListItemState(
-        checkList: CheckList, prevCheckListItem: CheckListItem,
+        prevCheckList: CheckList, prevCheckListItem: CheckListItem,
         updatedCheckListItem: DTOCheckListItem
     ) {
         Log.i("UPDATECHECKLISTITEM", "${updatedCheckListItem.checked}")
 
         _uiState.update { currentState ->
-            val tempCheckLists = currentState.checkLists
-            val targetCheckList =
-                tempCheckLists.firstOrNull { it.checkListId == checkList.checkListId }
-            val targetItem: CheckListItem?
-            if (targetCheckList != null) {
+            val tempCheckLists = currentState.checkLists.map { checkList ->
+                if (checkList.checkListId == prevCheckList.checkListId) {
+                    CheckList(
+                        checkList.checkListId, checkList.name, checkList.icon,
+                        checkList.checkListItems.map { checkListItem ->
+                            if (checkListItem.checkListItemId == prevCheckListItem.checkListItemId) {
+                                CheckListItem(
+                                    checkListItem.checkListItemId, updatedCheckListItem
+                                        .name, updatedCheckListItem.checked
+                                )
 
-                targetItem =
-                    targetCheckList.checkListItems.find {
-                        it.checkListItemId == prevCheckListItem
-                            .checkListItemId
-                    }
-                targetItem?.name = updatedCheckListItem.name
-                targetItem?.checked = updatedCheckListItem.checked
+                            } else {
+                                checkListItem
+                            }
 
+                        }.toMutableList()
+                    )
+
+                } else {
+                    checkList
+                }
             }
-            currentState.copy(checkLists = tempCheckLists)
+            currentState.copy(checkLists = tempCheckLists.toMutableList())
         }
     }
 
@@ -132,14 +143,27 @@ class CheckListViewModel : ViewModel() {
         }
     }
 
-    fun checkAllCheckListItems(checkList: CheckList) {
+    fun checkAllCheckListItems(prevCheckList: CheckList) {
         _uiState.update { currentState ->
-            val tempList = currentState.checkLists
-            val targetList = tempList.firstOrNull { it.checkListId == checkList.checkListId }
+            val tempCheckLists = currentState.checkLists.map { checkList ->
+                if (checkList.checkListId == prevCheckList.checkListId) {
+                    Log.i("CHECKLISTUPDATEITEM", checkList.name)
+                    CheckList(
+                        checkList.checkListId, checkList.name, checkList.icon,
+                        checkList.checkListItems.map { checkListItem ->
+                                CheckListItem(
+                                    checkListItem.checkListItemId, checkListItem
+                                        .name, true
+                                )
 
-            targetList?.checkListItems?.forEach { it.checked = true}
+                        }.toMutableList()
+                    )
 
-            currentState.copy()
+                } else {
+                    checkList
+                }
+            }
+            currentState.copy(checkLists = tempCheckLists.toMutableList())
 
         }
     }
