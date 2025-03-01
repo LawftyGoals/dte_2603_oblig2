@@ -13,4 +13,8 @@
     <string name="check">Check</string>
     <string name="check2">Check</string>
     <string name="totalt_lister">Totalt %1$s lister</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="sure_to_delete">Delete this checklist?</string>
+    <string name="sure_to_delete_text">Are you sure you want to delete "%1$s"?</string>
 </resources>
