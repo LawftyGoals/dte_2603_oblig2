@@ -9,11 +9,6 @@ data class CheckList(
     val checkListItems: MutableList<CheckListItem>
 )
 
-data class DTOCheckList(
-    val name: String, @DrawableRes val icon: Int, val checkListItems:
-    MutableList<CheckListItem>
-)
-
 data class CheckListItem(val checkListItemId: Int, val name: String, val checked: Boolean)
 
 data class DTOCheckListItem(val name: String, val checked: Boolean)
