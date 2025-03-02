@@ -55,10 +55,7 @@ data class UiState(
             )
         )
     ),
-    val checkListCount: Int = checkLists.count(),
     val checkListIdValue: Int = checkLists.count(),
-
-    val checkListItemCount: Int = 16,
     val checkListItemIdValue: Int = 17,
 
     val checkListNames: List<String> = listOf(
