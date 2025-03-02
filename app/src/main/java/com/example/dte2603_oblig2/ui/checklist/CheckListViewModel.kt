@@ -1,6 +1,5 @@
 package com.example.dte2603_oblig2.ui.checklist
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.dte2603_oblig2.data.CheckList
 import com.example.dte2603_oblig2.data.CheckListItem
@@ -10,6 +9,7 @@ import com.example.dte2603_oblig2.data.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.random.Random
 
 
 class CheckListViewModel : ViewModel() {
@@ -79,8 +79,6 @@ class CheckListViewModel : ViewModel() {
         prevCheckList: CheckList, prevCheckListItem: CheckListItem,
         updatedCheckListItem: DTOCheckListItem
     ) {
-        Log.i("UPDATECHECKLISTITEM", "${updatedCheckListItem.checked}")
-
         _uiState.update { currentState ->
             val tempCheckLists = currentState.checkLists.map { checkList ->
                 if (checkList.checkListId == prevCheckList.checkListId) {
@@ -147,14 +145,13 @@ class CheckListViewModel : ViewModel() {
         _uiState.update { currentState ->
             val tempCheckLists = currentState.checkLists.map { checkList ->
                 if (checkList.checkListId == prevCheckList.checkListId) {
-                    Log.i("CHECKLISTUPDATEITEM", checkList.name)
                     CheckList(
                         checkList.checkListId, checkList.name, checkList.icon,
                         checkList.checkListItems.map { checkListItem ->
-                                CheckListItem(
-                                    checkListItem.checkListItemId, checkListItem
-                                        .name, true
-                                )
+                            CheckListItem(
+                                checkListItem.checkListItemId, checkListItem
+                                    .name, true
+                            )
 
                         }.toMutableList()
                     )
@@ -166,6 +163,53 @@ class CheckListViewModel : ViewModel() {
             currentState.copy(checkLists = tempCheckLists.toMutableList())
 
         }
+    }
+
+    fun addRandomCheckList() {
+        _uiState.update { currentState ->
+            val updatedList = currentState.checkLists
+
+            val icon = currentState.iconsList[Random.nextInt(currentState.iconsList.count())]
+            val name =
+                currentState.checkListNames[Random.nextInt(currentState.checkListNames.count())]
+
+            val checkListItems: MutableList<CheckListItem> = mutableListOf()
+
+            var checkListItemIdValue = currentState.checkListItemIdValue
+
+            for (i in 0..3) {
+
+                val checkListItemDTO = currentState.checkListItemsRandom[Random.nextInt(
+                    currentState
+                        .checkListItemsRandom.count()
+                )]
+
+                checkListItems.add(
+                    CheckListItem(
+                        checkListItemIdValue, checkListItemDTO.name,
+                        checkListItemDTO
+                            .checked
+                    )
+                )
+
+                checkListItemIdValue += 1
+
+            }
+
+            val newCheckList = CheckList(
+                currentState.checkListIdValue, name, icon, checkListItems
+            )
+
+            updatedList.add(newCheckList)
+
+            currentState.copy(
+                checkListIdValue = currentState.checkListIdValue + 1,
+                checkListItemIdValue = checkListItemIdValue,
+                checkLists = updatedList
+            )
+
+        }
+
     }
 
 

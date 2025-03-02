@@ -59,5 +59,28 @@ data class UiState(
     val checkListIdValue: Int = checkLists.count(),
 
     val checkListItemCount: Int = 16,
-    val checkListItemIdValue: Int = 17
+    val checkListItemIdValue: Int = 17,
+
+    val checkListNames: List<String> = listOf(
+        "Vask", "Yellow", "Flybilletter", "Konsert",
+        "Pikachu", "Random"
+    ),
+
+    val checkListItemsRandom: List<DTOCheckListItem> = listOf(
+        DTOCheckListItem("Tackle", false),
+        DTOCheckListItem("Sjekke Flyselskap", false),
+        DTOCheckListItem("Charmander", true),
+        DTOCheckListItem("Bulbasaur", true),
+        DTOCheckListItem("Sjekke Hotell", false),
+        DTOCheckListItem("Sjekke Transport", false),
+        DTOCheckListItem("Ordne Transport", true),
+        DTOCheckListItem("Thunderbolt", false),
+        DTOCheckListItem("Ordne Retur", true),
+        DTOCheckListItem("Avklare fri fra jobb", true)
+    ),
+
+    val iconsList: List<Int> = listOf(
+        R.drawable.ic_launcher_background, R.drawable
+            .pokemon_trainer_red, R.drawable.pokemon_trainer_blue, R.drawable.ic_launcher_foreground
+    )
 )

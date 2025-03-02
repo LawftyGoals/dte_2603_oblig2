@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
@@ -57,10 +58,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dte2603_oblig2.R
 import com.example.dte2603_oblig2.data.CheckList
 import com.example.dte2603_oblig2.data.CheckListItem
-import com.example.dte2603_oblig2.data.DTOCheckList
 import com.example.dte2603_oblig2.data.DTOCheckListItem
 import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
-import androidx.compose.material3.AlertDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,13 +100,7 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
             // so it just adds the checklist
             Button(
                 onClick = {
-                    checkListViewModel.addCheckList(
-                        DTOCheckList(
-                            "Navn",
-                            R.drawable.ic_launcher_background,
-                            mutableListOf()
-                        )
-                    )
+                    checkListViewModel.addRandomCheckList()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
