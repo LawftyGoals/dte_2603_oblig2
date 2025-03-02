@@ -234,7 +234,7 @@ fun ChecklistCard(
                         Text(stringResource(R.string.tomt))
                     } else {
                         checkList.checkListItems.forEach { task ->
-                            TaskItem(
+                            CheckListItemCard(
                                 task, checkList, checkListViewModel
                             )
                         }
@@ -290,7 +290,10 @@ fun ChecklistCard(
 }
 
 @Composable
-fun TaskItem(item: CheckListItem, checkList: CheckList, checkListViewModel: CheckListViewModel) {
+fun CheckListItemCard(
+    item: CheckListItem, checkList: CheckList, checkListViewModel:
+    CheckListViewModel
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
