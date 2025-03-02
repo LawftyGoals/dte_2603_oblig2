@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -247,7 +248,10 @@ fun ChecklistCard(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = onDelete) {
+                IconButton(
+                    modifier = Modifier.testTag("Delete${checkList.name}"), onClick =
+                    onDelete
+                ) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = stringResource(R.string.delete)
@@ -261,7 +265,10 @@ fun ChecklistCard(
                     )
                 }
 
-                IconButton(onClick = { checkListViewModel.checkAllCheckListItems(checkList) }) {
+                IconButton(modifier = Modifier.testTag("checkAll${checkList.name}"), onClick = {
+                    checkListViewModel
+                        .checkAllCheckListItems(checkList)
+                }) {
                     Box {
                         Icon(
                             Icons.Default.Check,
