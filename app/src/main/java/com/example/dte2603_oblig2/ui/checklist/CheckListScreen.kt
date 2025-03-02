@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
@@ -60,16 +61,12 @@ import com.example.dte2603_oblig2.data.CheckListItem
 import com.example.dte2603_oblig2.data.DTOCheckList
 import com.example.dte2603_oblig2.data.DTOCheckListItem
 import com.example.dte2603_oblig2.ui.theme.Dte2603_oblig2Theme
-import androidx.compose.material3.AlertDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
     val checkListUiState by checkListViewModel.uiState.collectAsState()
-
-    val showDialog = remember { mutableStateOf(false) }
-    val dialogText = remember { mutableStateOf("") }
 
     val checkListCount = checkListUiState.checkLists.count()
     val checkListItemCount: Int = checkListUiState.checkLists.sumOf { it.checkListItems.size }
@@ -142,10 +139,6 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
                         checkListViewModel = checkListViewModel,
                         onDelete = {
                             checkListToDelete.value = checkList
-                            //println("About to delete and show dialog!")
-                            //showDialog.value = true
-                            //dialogText.value = "Deleted checklist: ${checkList.name}"
-                            //checkListViewModel.deleteCheckList(checkList)
                         }
                     )
                 }
@@ -156,14 +149,14 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
     checkListToDelete.value?.let { checklist ->
         AlertDialog(
             onDismissRequest = {
-                // If the user taps outside or back, just close the dialog
+                //  Outside click, just close the dialog
                 checkListToDelete.value = null
             },
             title = { Text(stringResource(R.string.sure_to_delete)) },
             text = { Text(stringResource(R.string.sure_to_delete_text, checklist.name)) },
             confirmButton = {
                 Button(onClick = {
-                    // The user confirmed, so proceed with the delete
+                    // Confirmed, so delete
                     checkListViewModel.deleteCheckList(checklist)
                     checkListToDelete.value = null
                 }) {
@@ -172,7 +165,7 @@ fun CheckListScreen(checkListViewModel: CheckListViewModel = viewModel()) {
             },
             dismissButton = {
                 Button(onClick = {
-                    // The user canceled, so do nothing
+                    // Canceled, do nothing
                     checkListToDelete.value = null
                 }) {
                     Text(stringResource(R.string.cancel))
@@ -209,8 +202,10 @@ fun ChecklistCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = drawable, contentDescription = stringResource(R.string.image_for) + checkList.name,
-                    contentScale = ContentScale.Fit, modifier = Modifier
+                    painter = drawable,
+                    contentDescription = stringResource(R.string.image_for) + checkList.name,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
                         .weight(1f)
                         .height(32.dp)
                         .width(32.dp)
@@ -246,7 +241,8 @@ fun ChecklistCard(
                     } else {
                         checkList.checkListItems.forEach { task ->
                             TaskItem(
-                                task, checkList, checkListViewModel)
+                                task, checkList, checkListViewModel
+                            )
                         }
                     }
                 } else {
@@ -259,23 +255,31 @@ fun ChecklistCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete,
-                        contentDescription = stringResource(R.string.delete))
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.delete)
+                    )
                 }
 
                 IconButton(onClick = {}) {
-                    Icon(Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit))
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.edit)
+                    )
                 }
 
                 IconButton(onClick = { checkListViewModel.checkAllCheckListItems(checkList) }) {
                     Box {
-                        Icon(Icons.Default.Check,
-                            contentDescription = stringResource(R.string.check))
+                        Icon(
+                            Icons.Default.Check,
+                            contentDescription = stringResource(R.string.check)
+                        )
                         Row {
                             Spacer(Modifier.padding(3.dp))
-                            Icon(Icons.Default.Check,
-                                contentDescription = stringResource(R.string.check2))
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = stringResource(R.string.check2)
+                            )
                         }
 
                     }
