@@ -113,15 +113,12 @@ class CheckListViewModel : ViewModel() {
                             .checked
                     )
                 )
-
                 checkListItemIdValue += 1
-
             }
 
             val newCheckList = CheckList(
                 currentState.checkListIdValue, name, icon, checkListItems
             )
-
             updatedList.add(newCheckList)
 
             currentState.copy(
@@ -129,10 +126,6 @@ class CheckListViewModel : ViewModel() {
                 checkListItemIdValue = checkListItemIdValue,
                 checkLists = updatedList
             )
-
         }
-
     }
-
-
 }

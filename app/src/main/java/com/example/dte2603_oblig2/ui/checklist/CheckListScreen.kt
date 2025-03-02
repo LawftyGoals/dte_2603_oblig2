@@ -290,7 +290,7 @@ fun ChecklistCard(
 }
 
 @Composable
-fun TaskItem(task: CheckListItem, checkList: CheckList, checkListViewModel: CheckListViewModel) {
+fun TaskItem(item: CheckListItem, checkList: CheckList, checkListViewModel: CheckListViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,14 +302,14 @@ fun TaskItem(task: CheckListItem, checkList: CheckList, checkListViewModel: Chec
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Switch(checked = task.checked, onCheckedChange = {
+        Switch(checked = item.checked, onCheckedChange = {
             checkListViewModel
                 .updateCheckListItemState(
-                    checkList, task, DTOCheckListItem(task.name, !task.checked)
+                    checkList, item, DTOCheckListItem(item.name, !item.checked)
                 )
         })
         Spacer(Modifier.padding(8.dp))
-        Text(text = task.name)
+        Text(text = item.name)
     }
 }
 
